@@ -14,7 +14,7 @@
     "highlights": ["HighSpeedInternetAccess", "CloseToTransit"],
     "isPetsAllowed": true,
     "isParkingIncluded": false,
-    "beds": 2,
+    "c": 2,
     "baths": 1,
     "squareFeet": 800,
     "propertyType": "Apartment",

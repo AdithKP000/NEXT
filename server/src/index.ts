@@ -7,7 +7,9 @@ import bodyParser from "body-parser"
 import { authMiddleware } from "./middleware/authMiddleware"
 import tenantRoutes from "./routes/tenantRoutes"
 import managerRoutes from "./routes/managerRoutes"
-
+import propertyRoutes from "./routes/propertyRoutes"
+import leaseRoutes from "./routes/leaseRoutes"
+import applocationRoutes from './routes/applocationRoutes'
 // Route imports
 
 
@@ -30,9 +32,12 @@ app.get('/',(req,res)=>{
     res.send("This is home page");
 })
 
-
+app.use("/properties",propertyRoutes)
 app.use("/tenants",authMiddleware(["tenant"]),tenantRoutes)
 app.use("/managers",authMiddleware(["manager"]),managerRoutes)
+app.use("/lease",leaseRoutes)
+app.use('/application',applocationRoutes)
+
 
 const PORT=process.env.PORT ||3002
 

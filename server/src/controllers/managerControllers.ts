@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
+import { wktToGeoJSON } from "@terraformer/wkt";
 
 const prisma= new PrismaClient();
 export const createManagerController = async(req:Request,res:Response): Promise<void> =>{
@@ -74,3 +75,47 @@ export const updateManagerController = async(req:Request,res:Response):Promise<v
 }
 
 
+
+
+
+export const getManagerPropertiesController = async(req:Request,res:Response):Promise<void>=>
+{ try {
+        const {cognitoId}=req.params
+        const property=await prisma.property.findMany({
+            where:{managerCognitoId:cognitoId},
+            include:{
+                location:true,
+             }
+        });
+
+        const propertyWithFormattedLocation= await Promise.all(
+            property.map(async (prop)=>{
+                const coordinates: {coordinates : string}[]=
+            await prisma.$queryRaw `SELECT  ST_asText(coordinates) as coordinates from "Location" WHERE id=${prop.location.id} `
+            const geoJSON:any= wktToGeoJSON(coordinates[0]?.coordinates || "");
+            const longitude=geoJSON.coordinates[0];
+            const latitude=geoJSON.coordinates[1];
+            return{
+                ...prop,
+                location:{
+                ...prop.location,
+                coordinates:{
+                    longitude,
+                    latitude,
+                }
+            }
+              }
+            })
+        )
+        res.json(propertyWithFormattedLocation);
+  
+    } catch (error) {
+        console.log(error)
+        console.log(error)
+        res.status(500).send({
+            success:false,
+            message:"Unable to get manager properties",
+            error,
+        })
+    }
+}

@@ -3,6 +3,7 @@ import  express  from 'express';
 import { 
     createManagerController,
     getManagerController, 
+    getManagerPropertiesController, 
     updateManagerController
         } from '../controllers/managerControllers';
 
@@ -22,5 +23,8 @@ router.get("/:cognitoId",getManagerController);
 router.put("/:cognitoId",updateManagerController)
 
 
+
+//get manager Properties
+router.get('/:cognitoId/properties',getManagerPropertiesController)
 
 export default router
